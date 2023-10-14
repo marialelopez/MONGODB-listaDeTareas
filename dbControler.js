@@ -192,3 +192,15 @@ module.exports = {
   editarTareaPorDescripcion,
 //   editarUsuarioPorEmail
 };
+
+// {
+//     "descripcion": "pagar bancolombia",
+//     "completada": false,
+//     "fechaVencimiento": "2023-10-23"
+//   }
+  
+// {
+// "rol": "administrador",
+// "email": "admin-andres@gmail.com",
+// "password": "456"
+// }
