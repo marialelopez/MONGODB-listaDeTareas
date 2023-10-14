@@ -1,6 +1,7 @@
 const { json } = require("express");
 const { MongoClient } = require("mongodb");
 const env = require("dotenv").config();
+const { ObjectId } = require("mongodb");
 
 const uri = process.env.MONGO_URI;
 
@@ -108,8 +109,9 @@ async function eliminarTareaPorDescripcion(descripcion) {
   const tareasCollection = collections.tareas;
 
   try {
+    const filter = { _id: new ObjectId(descripcion) };
     const resultado = await tareasCollection.deleteOne({
-      descripcion: descripcion,
+      _id: filter
     });
     if (resultado.deletedCount === 1) {
       return true; // Éxito al eliminar
@@ -139,37 +141,48 @@ async function eliminarUsuarioPorEmail(email) {
 }
 
 // Función para editar una tarea por descripción
-async function editarTareaPorDescripcion(descripcion, nuevaDescripcion, nuevaCompletada, nuevaFechaVencimiento) {
-    const collections = await conectarBaseDatos();
-    const tareasCollection = collections.tareas;
-  
-    try {
-      const resultado = await tareasCollection.updateOne(
-        { descripcion: descripcion },
-        { $set: { descripcion: nuevaDescripcion, completada: nuevaCompletada, fechaVencimiento: nuevaFechaVencimiento } }
-      );
-  
-      if (resultado.modifiedCount === 1) {
-        return true; // Éxito al editar
+async function editarTareaPorDescripcion(
+  descripcion,
+  nuevaDescripcion,
+  nuevaCompletada,
+  nuevaFechaVencimiento
+) {
+  const collections = await conectarBaseDatos();
+  const tareasCollection = collections.tareas;
+
+  try {
+    const resultado = await tareasCollection.updateOne(
+      { descripcion: descripcion },
+      {
+        $set: {
+          descripcion: nuevaDescripcion,
+          completada: nuevaCompletada,
+          fechaVencimiento: nuevaFechaVencimiento,
+        },
       }
-      return false; // No se encontró el documento con la descripción especificada
-    } catch (error) {
-      console.error("Error al editar la tarea:", error);
-      return false; // Error al editar
+    );
+
+    if (resultado.modifiedCount === 1) {
+      return true; // Éxito al editar
     }
+    return false; // No se encontró el documento con la descripción especificada
+  } catch (error) {
+    console.error("Error al editar la tarea:", error);
+    return false; // Error al editar
   }
-  
+}
+
 //   // Función para editar un usuario por email
 //   async function editarUsuarioPorEmail(email, nuevoEmail, nuevoPassword, nuevoRol) {
 //     const collections = await conectarBaseDatos();
 //     const usuarioCollection = collections.usuario;
-  
+
 //     try {
 //       const resultado = await usuarioCollection.updateOne(
 //         { email: email },
 //         { $set: { email: nuevoEmail, password: nuevoPassword, rol: nuevoRol } }
 //       );
-  
+
 //       if (resultado.modifiedCount === 1) {
 //         return true; // Éxito al editar
 //       }
@@ -179,7 +192,6 @@ async function editarTareaPorDescripcion(descripcion, nuevaDescripcion, nuevaCom
 //       return false; // Error al editar
 //     }
 //   }
-  
 
 module.exports = {
   conectarBaseDatos,
@@ -190,7 +202,7 @@ module.exports = {
   eliminarTareaPorDescripcion,
   eliminarUsuarioPorEmail,
   editarTareaPorDescripcion,
-//   editarUsuarioPorEmail
+  //   editarUsuarioPorEmail
 };
 
 // {
@@ -198,7 +210,7 @@ module.exports = {
 //     "completada": false,
 //     "fechaVencimiento": "2023-10-23"
 //   }
-  
+
 // {
 // "rol": "administrador",
 // "email": "admin-andres@gmail.com",

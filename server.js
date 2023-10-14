@@ -3,6 +3,7 @@ const app = express();
 const port = 3000;
 const funcionesCRUD = require("./dbControler");
 
+
 app.use(express.json());
 
 //ruta para leer documentos de la coleccion "tareas"
